@@ -5,26 +5,15 @@ namespace MyBackend.DAL
 {
     public class StudentEF : IStudent
     {
-        private AppDbContext _dbContext;
-        public StudentEF(AppDbContext dbContext)
+        private AppDbContext _dbcontext;
+        public StudentEF(AppDbContext dbcontext)
         {
-            _dbContext = dbContext;
+            _dbcontext = dbcontext;
         }
 
-        public void Delete(int id)
+        void IStudent.Delete(int id)
         {
-            var deleteStudent = GetById(id);
-            if (deleteStudent == null)
-                throw new Exception($"Data student dengan id {id} tidak ditemukan");
-            try
-            {
-                _dbcontext.Remove(deleteStudent);
-                _dbcontext.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            throw new NotImplementedException();
         }
 
         IEnumerable<Student> IStudent.GetAll()
@@ -46,6 +35,44 @@ namespace MyBackend.DAL
         {
             throw new NotImplementedException();
         }
+
+
+        //menambahkan student ke course
+       public void AddStudentToCourse(int studentId, int courseID)
+        {
+            try
+            {
+                var student = _dbcontext.Students.FirstOrDefault(s => s.Id == studentId);
+                var course = _dbcontext.Courses.FirstOrDefault(b => b.CourseID == courseID);
+                if (student != null && course != null)
+                {
+                    //battle.Samurais = new List<Samurai>();
+                    course.Students.Add(student);
+                    _dbcontext.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task AddStudentToCourse(int studentId, int courseID)
+        {
+            var ambilproduk = _dbcontext.Students.FirstOrDefault(s => s.Id == studentId);
+            var ambilkatalog = _dbcontext.Courses.FirstOrDefault(s => s.CourseID == courseID);
+
+            ambilkatalog.Students.Add(ambilproduk);
+            //katalogg.Produks.Add(produkk);
+
+            await _dbcontext.SaveChangesAsync();
+        }*/
+
+        /*void IStudent.AddStudentToCourse(int studentId, int courseID)
+        {
+            throw new NotImplementedException();
+        }
     }
-}
-*/
+
+    
+}*/

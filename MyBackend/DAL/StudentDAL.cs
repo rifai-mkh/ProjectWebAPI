@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using MyBackend.DTO;
 using MyBackend.Models;
 using System.Data.SqlClient;
 
@@ -7,141 +9,71 @@ namespace MyBackend.DAL
     public class StudentDAL : IStudent
     {
         private readonly IConfiguration _config;
-        public StudentDAL(IConfiguration config)
+        private readonly AppDbContext _dbcontext;
+        public StudentDAL(IConfiguration config, AppDbContext dbcontext)
         {
             _config = config;
-        }
-        private string GetConn()
-        {
-            return _config.GetConnectionString("StudentConnection");
+            _dbcontext = dbcontext;
         }
 
         public IEnumerable<Student> GetAll()
         {
-            using (SqlConnection conn = new SqlConnection(GetConn()))
-            {
-                List<Student> listStudent = new List<Student>();
-                string strSql = @"select * from Students order by Id asc";
-                SqlCommand cmd = new SqlCommand(strSql, conn);
-                conn.Open();
-
-                SqlDataReader dr = cmd.ExecuteReader();
-                if (dr.HasRows)
-                {
-                    while (dr.Read())
-                    {
-                        listStudent.Add(new Student()
-                        {
-                            Id = Convert.ToInt32(dr["Id"]),
-                            FirstMidName = dr["FirstMidName"].ToString(),
-                            LastName = dr["LastName"].ToString()
-                        });
-                    }
-                }
-                dr.Close();
-                cmd.Dispose();
-                conn.Close();
-
-                return listStudent;
-            }
-
+            var results = _dbcontext.Students.OrderBy(s => s.LastName).ToList();
+            return results;
         }
 
-        public Student GetById(int id)
-        {
-            using (SqlConnection conn = new SqlConnection(GetConn()))
-            {
-                Student student = new Student();
-                string strSql = @"select * from Students where Id=@Id";
-                SqlCommand cmd = new SqlCommand(strSql, conn);
-                cmd.Parameters.AddWithValue("@Id", id);
-                conn.Open();
-
-                SqlDataReader dr = cmd.ExecuteReader();
-                if (dr.HasRows)
-                {
-                    dr.Read();
-                    student.Id = Convert.ToInt32(dr["Id"]);
-                    student.FirstMidName = dr["FirstMidName"].ToString();
-                    student.LastName = dr["LastName"].ToString();
-                }
-
-                dr.Close();
-                cmd.Dispose();
-                conn.Close();
-
-                return student;
-            }
-
-        }
-
-        /*public IEnumerable<Student> GetByName(string name)
-        {
-            using (SqlConnection conn = new SqlConnection(GetConn()))
-            {
-                List<Student> listStudent = new List<Student>();
-                string strSql = @"select * from Students 
-                                  where Name like @FirstMidName or @LastName
-                                  order by FirstMidName asc";
-                SqlCommand cmd = new SqlCommand(strSql, conn);
-                cmd.Parameters.AddWithValue("@Name", "%" + name + "%");
-                conn.Open();
-
-                SqlDataReader dr = cmd.ExecuteReader();
-                if (dr.HasRows)
-                {
-                    while (dr.Read())
-                    {
-                        listStudent.Add(new Student()
-                        {
-                            Id = Convert.ToInt32(dr["Id"]),
-                            FirstMidName = dr["Name"].ToString()
-                        });
-                    }
-                }
-                dr.Close();
-                cmd.Dispose();
-                conn.Close();
-
-                return listStudent;
-            }
-        }*/
-
-        public Student Insert(Student student)
-        {
-            using (SqlConnection conn = new SqlConnection(GetConn()))
-            {
-                string strSql = @"insert into Students(FirstMidName, LastName) values(@FirstMidName, @LastName);select @@identity";
-                SqlCommand cmd = new SqlCommand(strSql, conn);
-                cmd.Parameters.AddWithValue("@FirstMidName", student.FirstMidName);
-                cmd.Parameters.AddWithValue("@LastName", student.LastName);
-                try
-                {
-                    conn.Open();
-                    int idNum = Convert.ToInt32(cmd.ExecuteScalar());
-                    student.Id = idNum;
-                    return student;
-                }
-                catch (SqlException sqlEx)
-                {
-                    throw new Exception($"Error: {sqlEx.Message}");
-                }
-                finally
-                {
-                    cmd.Dispose();
-                    conn.Close();
-                }
-            }
-
-        }
-
-        /*public async Task<Student> Insert(Student obj)
+        public Student GetById(int Id)
         {
             try
             {
-                _context.Students.Add(obj);
-                await _context.SaveChangesAsync();
-                return obj;
+                var result = _dbcontext.Students.FirstOrDefault(s => s.Id == Id);
+                /*var result = (from s in _dbcontext.students
+                              where s.ID==id
+                              select s).FirstOrDefault():*/
+                return result;
+            }
+            catch
+            {
+                throw new Exception($"Data Student {Id} tidak ditemukan");
+            }
+        }
+
+        public IEnumerable<Student> GetByfirstMidName(string firstmidname)
+        {
+            var results = _dbcontext.Students.
+                Where(s => s.FirstMidName.Contains(firstmidname)).OrderBy(s => s.FirstMidName);
+            return results;
+        }
+
+        public IEnumerable<Student> GetByLastName(string lastname)
+        {
+            var results = _dbcontext.Students.
+                Where(s => s.LastName.Contains(lastname)).OrderBy(s => s.LastName);
+            return results;
+        }
+
+
+        public Student Insert(Student student)
+        {
+            try
+            {
+                _dbcontext.Students.Add(student);
+                _dbcontext.SaveChanges();
+                return student;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        /*public async Task<Student> Insert(Student student)
+        {
+            try
+            {
+                _dbcontext.Students.Add(student);
+                await _dbcontext.SaveChangesAsync();
+                return student;
 
             }
             catch (Exception ex)
@@ -150,47 +82,117 @@ namespace MyBackend.DAL
             }
         }*/
 
+        public Student GetStudentWithCourse(int studentId)
+        {
+            var result = _dbcontext.Students.Include(s => s.Courses)
+                .FirstOrDefault(s => s.Id == studentId);
+            if (result == null)
+                throw new Exception($"student id {studentId} tidak ditemukan");
+
+            return result;
+        }
+
+        public Course GetCourseWithStudent(int courseID)
+        {
+            var result = _dbcontext.Courses.Include(s => s.Students)
+                .FirstOrDefault(s => s.CourseID == courseID);
+            if (result == null)
+                throw new Exception($"course id {courseID} tidak ditemukan");
+
+            return result;
+        }
 
         public Student Update(Student student)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var studentUpdate = GetById(student.Id);
+                if (studentUpdate == null)
+                {
+                    throw new Exception($"Data student id {student.Id} tidak ditemukan");
+                }
+
+                studentUpdate.LastName = student.LastName;
+                studentUpdate.FirstMidName = student.FirstMidName;
+                _dbcontext.SaveChanges();
+
+                return student;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
+        
 
         public void Delete(int id)
         {
-            using (SqlConnection conn = new SqlConnection(GetConn()))
+            var deleteStudent = GetById(id);
+            if (deleteStudent == null)
+                throw new Exception($"Data student dengan id {id} tidak ditemukan");
+            try
             {
-                string strSql = @"delete from Students where Id=@Id";
-                SqlCommand cmd = new SqlCommand(strSql, conn);
-                cmd.Parameters.AddWithValue("@Id", id);
-                try
-                {
-                    conn.Open();
-                    int status = cmd.ExecuteNonQuery();
-                    if (status != 1)
-                        throw new Exception($"Gagal delete data dengan id {id}");
-                }
-                catch (SqlException sqlEx)
-                {
-                    throw new Exception(sqlEx.Message);
-                }
-                finally
-                {
-                    cmd.Dispose();
-                    conn.Close();
-                }
+                _dbcontext.Remove(deleteStudent);
+                _dbcontext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
 
         }
 
-        public IEnumerable<Student> GetByLastName(string lastname)
+        
+
+
+        public IEnumerable<Student> GetAllWithCourse()
         {
-            throw new NotImplementedException();
+            var results = _dbcontext.Students.Include(s => s.Courses);
+            return results;
         }
 
-        public IEnumerable<Student> GetByFirstMidName(string firstmidname)
+        public void RemoveCourseFromStudent(int studentId, int courseID)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var battleWithSamurai = _dbcontext.Courses.Include(b => b.Students.Where(s => s.Id == studentId))
+                .FirstOrDefault(s => s.CourseID == courseID);
+                var student = battleWithSamurai.Students[0];
+                battleWithSamurai.Students.Remove(student);
+                _dbcontext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
+
+
+        /*public StudentWithCourseDTO GetByCourseId(int courseID)
+        {
+            var students = _student.GetByCourseId(courseID);
+            var studentWithCourseDTO = _mapper.Map<StudentWithCourseDTO>(students);
+            return studentWithCourseDTO;
+        }*/
+
+        /*public async Task<IEnumerable<Student>> GetStudentByCourseID(int courseID)
+        {
+            var student = await _dbcontext.Students.Where(s => s.CourseID == (courseID)).Include(s => s.FirstMidName).Include(s => s.LastName)
+              .OrderBy(s => s.CourseID).ToListAsync();
+            return student;
+        }*/
+
+        /*public IEnumerable<Student> GetByCourseId(int courseID)
+        {
+            var student = _dbcontext.Students.FirstOrDefault(s => s.Id == courseID);
+
+            if (student == null)
+                throw new Exception($"Data id {courseID} tidak ditemukan");
+            return student;
+        }*/
+
+
+
+
     }
 }

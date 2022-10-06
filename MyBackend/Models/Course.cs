@@ -9,8 +9,10 @@ namespace MyBackend.Models
         public string Title { get; set; }
         public int Credits { get; set; }
 
-        public Student student { get; set; }
+        public List<Student> Students { get; set; } = new List<Student>();
+
+        //public Student student { get; set; }
         //public int StudentId { get; set; }
-        //public ICollection<Enrollment> Enrollments { get; set; }
+        public ICollection<Enrollment> Enrollments { get; set; }
     }
 }

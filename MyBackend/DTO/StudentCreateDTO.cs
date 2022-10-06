@@ -7,7 +7,8 @@
         public string LastName { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
-        /*public DateTime EnrollmentDate { get; set; }
-        public ICollection<Enrollment> Enrollments { get; set; }*/
+        public DateTime EnrollmentDate { get; set; }
+
+        /*public ICollection<Enrollment> Enrollments { get; set; }*/
     }
 }

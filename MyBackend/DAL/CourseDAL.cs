@@ -12,12 +12,13 @@ namespace MyBackend.DAL
     public class CourseDAL : ICourse
     {
         private readonly AppDbContext _dbcontext;
+        
         public CourseDAL(AppDbContext dbcontext)
         {
             _dbcontext = dbcontext;
+            
         }
 
-        
 
         Task ICourse.AddCourseExisting(int courseID, string title, int credits)
         {
@@ -52,11 +53,24 @@ namespace MyBackend.DAL
             return allcourse;
         }
 
-
-        Task<Course> ICrud<Course>.GetById(int id)
+        public IEnumerable<Course> GetByTitle(string title)
         {
-            throw new NotImplementedException();
+            var bytitle = _dbcontext.Courses.Where(c => c.Title.Contains(title));
+            return bytitle;
         }
+
+
+        public async Task<Course> GetById(int courseID)
+        {
+            var result = _dbcontext.Courses.FirstOrDefault(s => s.CourseID == courseID);
+            
+            if (result == null)
+                throw new Exception($"Data Course Id {courseID} tidak ditemukan");
+            return result;
+
+        }
+
+
 
         public async Task<Course> Insert(Course obj)
         {
@@ -71,40 +85,92 @@ namespace MyBackend.DAL
             {
                 throw new Exception($"{ex.Message}");
             }
-        }
-
-        /*public Course Insert(Course course)
-        {
-            using (SqlConnection conn = new SqlConnection(GetConn()))
-            {
-                string strSql = @"insert into Courses(Title, Credits) values(@Title, @Credits);select @@identity";
-                SqlCommand cmd = new SqlCommand(strSql, conn);
-                cmd.Parameters.AddWithValue("@Title", course.Title);
-                cmd.Parameters.AddWithValue("@Credits", course.Credits);
-                try
-                {
-                    conn.Open();
-                    int idNum = Convert.ToInt32(cmd.ExecuteScalar());
-                    course.courseID = idNum;
-                    return course;
-                }
-                catch (SqlException sqlEx)
-                {
-                    throw new Exception($"Error: {sqlEx.Message}");
-                }
-                finally
-                {
-                    cmd.Dispose();
-                    conn.Close();
-                }
-            }
-
-        }*/
+        }       
 
 
         Task<Course> ICrud<Course>.Update(Course obj)
         {
             throw new NotImplementedException();
         }
+
+        //implemen dan method untuk add student to course
+        public void AddStudentToCourse(int studentId, int courseID)
+        {
+            try
+            {
+                var student = _dbcontext.Students.FirstOrDefault(s => s.Id == studentId);
+                var course = _dbcontext.Courses.FirstOrDefault(b => b.CourseID == courseID);
+                if (student != null && course != null)
+                {
+                    course.Students.Add(student);
+                    _dbcontext.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<IEnumerable<Student>> GetByStudentId(int studentId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddEnrollment(int enrollmentID, int studentId, int courseID, string grade)
+        {
+            try
+            {
+                var enrollment = _dbcontext.Enrollments.FirstOrDefault(c => c.EnrollmentId== enrollmentID);
+                var student = _dbcontext.Students.FirstOrDefault(s => s.Id == studentId);
+                var course = _dbcontext.Courses.FirstOrDefault(b => b.CourseID == courseID);
+                if (student != null && course != null)
+                {
+                    course.Enrollments.Add(enrollment);
+                    _dbcontext.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<Course> GetBy(int id)
+        {
+            var result = _dbcontext.Courses.FirstOrDefault(s => s.CourseID == id);
+
+            if (result == null)
+                throw new Exception($"Data Course Id {id} tidak ditemukan");
+            return result;
+        }
+
+        /*public void RemoveCourseFromStudent(int studentId, int courseID)
+        {
+            try
+            {
+                var battleWithSamurai = _dbcontext.Courses.Include(b => b.Students.Where(s => s.Id == studentId))
+                .FirstOrDefault(s => s.CourseID == courseID);
+                var student = battleWithSamurai.Students[0];
+                battleWithSamurai.Students.Remove(student);
+                _dbcontext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }*/
+
+
+
+        /*public async Task<Course> GetCourseWithStudent(int courseID)
+        {
+            var result = _dbcontext.Courses.Include(s => s.Students)
+                .FirstOrDefault(s => s.CourseID == courseID);
+            if (result == null)
+                throw new Exception($"samurai id {courseID} tidak ditemukan");
+
+            return result;
+        }*/
     }
 }

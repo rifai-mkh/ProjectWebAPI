@@ -10,8 +10,8 @@ namespace MyBackend.DAL
         }
         public DbSet<Student> Students { get; set; }
         public DbSet<Course> Courses { get; set; }
-        /*public DbSet<Enrollment> Enrollments { get; set; }
-        public DbSet<Grade> Grades { get; set; }
+        public DbSet<Enrollment> Enrollments { get; set; }
+        /*public DbSet<Grade> Grades { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=StudentDb")

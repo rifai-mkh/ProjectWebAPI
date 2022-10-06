@@ -15,6 +15,8 @@ builder.Services.AddSwaggerGen();
 //menambahkan automapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+
+
 //untuk EF
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("StudentConnection")));
@@ -22,6 +24,7 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(
 //DI
 builder.Services.AddScoped<IStudent, StudentDAL>();
 builder.Services.AddScoped<ICourse, CourseDAL>();
+builder.Services.AddScoped<IEnrollment, EnrollmentDAL>();
 
 var app = builder.Build();
 

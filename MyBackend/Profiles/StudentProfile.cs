@@ -14,11 +14,38 @@ namespace MyBackend.Profiles
             CreateMap<StudentCreateDTO, Student>();
             CreateMap<Student, StudentCreateDTO>();
 
+            CreateMap<StudentUpdateDTO, Student>();
+            CreateMap<Student, StudentUpdateDTO>();
+
             CreateMap<CourseCreateDTO, Course>();
             CreateMap<Course, CourseCreateDTO>();
 
             CreateMap<CourseReadDTO, Course>();
             CreateMap<Course, CourseReadDTO>();
+
+            CreateMap<AddStudentToCourseDTO, Course>();
+            CreateMap<Course, AddStudentToCourseDTO>();
+
+            CreateMap<Student, StudentWithCourseDTO>();
+            CreateMap<StudentWithCourseDTO, Student>();
+
+            CreateMap<Course, StudentWithCourseDTO>();
+            CreateMap<StudentWithCourseDTO, Course>();
+
+            CreateMap<EnrollmentAddDTO, Enrollment>();
+            CreateMap<Enrollment, EnrollmentAddDTO>();
+
+            CreateMap<EnrollmentGetDTO, Enrollment>();
+            CreateMap<Enrollment, EnrollmentGetDTO>();
+
+            CreateMap<StudentWithCourseDTO, Student>();
+            CreateMap<Student, StudentWithCourseDTO>();
+
+            CreateMap<StudentWithCourseDTO, Course>();
+            CreateMap<Course, StudentWithCourseDTO>();
+
+            CreateMap<CourseWithStudentDTO, Course>();
+            CreateMap<Course, CourseWithStudentDTO>();
         }
     }
 }
