@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MyBackend.DTO;
+using MyBackend.Helpers;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -11,21 +12,22 @@ namespace MyBackend.DAL
     public class UserDAL : IUser
     {
         private readonly UserManager<IdentityUser> _userManager;
-        //private readonly AppSettings _appSettings;
-        public UserDAL(UserManager<IdentityUser> userManager)
+        private readonly AppSettings _appSettings;
+        public UserDAL(UserManager<IdentityUser> userManager,
+            IOptions<AppSettings> appSettings)
         {
             _userManager = userManager;
-            //_appSettings = appSettings.Value;
+            _appSettings = appSettings.Value;
         }
 
-        /*public async Task<UserGetDTO> Authenticate(AddUserDTO user)
+        public async Task<UserGetDTO> Authenticate(AddUserDTO user)
         {
             var currUser = await _userManager.FindByNameAsync(user.Username);
             var userResult = await _userManager.CheckPasswordAsync(currUser, user.Password);
             if (!userResult)
                 throw new Exception($"Authentication failed");
 
-            UserGetDto userWithToken = new UserGetDTO
+            UserGetDTO userWithToken = new UserGetDTO
             {
                 Username = user.Username
             };
@@ -37,14 +39,14 @@ namespace MyBackend.DAL
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddDays(1),
+                Expires = DateTime.Now.AddDays(2),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
                     SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             userWithToken.Token = tokenHandler.WriteToken(token);
             return userWithToken;
-        }*/
+        }
 
         public IEnumerable<UserGetDTO> GetAll()
         {

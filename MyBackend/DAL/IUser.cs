@@ -6,6 +6,6 @@ namespace MyBackend.DAL
     {
         Task Registration(AddUserDTO user);
         IEnumerable<UserGetDTO> GetAll();
-        //Task<UserGetDTO> Authenticate(AddUserDTO user);
+        Task<UserGetDTO> Authenticate(AddUserDTO user);
     }
 }

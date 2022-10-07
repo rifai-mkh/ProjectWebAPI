@@ -4,7 +4,7 @@ using MyBackend.DAL;
 using MyBackend.DTO;
 
 namespace MyBackend.Controllers
-{
+{    
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
@@ -31,7 +31,7 @@ namespace MyBackend.Controllers
             }
         }
 
-        /*[AllowAnonymous]
+        [AllowAnonymous]
         [HttpPost("Login")]
         public async Task<IActionResult> Authenticate(AddUserDTO userDto)
         {
@@ -46,6 +46,6 @@ namespace MyBackend.Controllers
             {
                 return BadRequest(ex.Message);
             }
-        }*/
+        }
     }
 }
