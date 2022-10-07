@@ -33,7 +33,7 @@ namespace MyBackend.Controllers
             return listCourseReadDto;
         }        
 
-        [HttpGet("GetByCourseID{courseID}")]
+        [HttpGet("GetBy{courseID}")]
         public async Task<CourseReadDTO> Get(int courseID)
         {
             var result = await _courseDAL.GetById(courseID);
@@ -41,13 +41,7 @@ namespace MyBackend.Controllers
             return courseReadDto;
         }
 
-        [HttpGet("{courseID}")]
-        public async Task<StudentWithCourseDTO> GetBy(int id)
-        {
-            var result = await _courseDAL.GetBy(id);
-            var courseReadDto = _mapper.Map<StudentWithCourseDTO>(result);
-            return courseReadDto;
-        }
+        
 
         [HttpGet("ByTitle")]
         public IEnumerable<CourseReadDTO> GetByTitle(string title)
@@ -66,7 +60,7 @@ namespace MyBackend.Controllers
 
 
             //Query untuk menampilkan Semua Student beserta dengan Semua Course yang diambil
-            [HttpGet("StudentsWithCourses")]
+        [HttpGet("StudentsWithCourses")]
         public IEnumerable<StudentWithCourseDTO> GetCourseWithCourse()
         {
             var results = _student.GetAllWithCourse();

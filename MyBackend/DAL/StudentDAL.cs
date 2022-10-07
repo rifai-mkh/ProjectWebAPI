@@ -140,9 +140,7 @@ namespace MyBackend.DAL
                 throw new Exception(ex.Message);
             }
 
-        }
-
-        
+        }       
 
 
         public IEnumerable<Student> GetAllWithCourse()
@@ -166,33 +164,5 @@ namespace MyBackend.DAL
                 throw new Exception(ex.Message);
             }
         }
-
-
-        /*public StudentWithCourseDTO GetByCourseId(int courseID)
-        {
-            var students = _student.GetByCourseId(courseID);
-            var studentWithCourseDTO = _mapper.Map<StudentWithCourseDTO>(students);
-            return studentWithCourseDTO;
-        }*/
-
-        /*public async Task<IEnumerable<Student>> GetStudentByCourseID(int courseID)
-        {
-            var student = await _dbcontext.Students.Where(s => s.CourseID == (courseID)).Include(s => s.FirstMidName).Include(s => s.LastName)
-              .OrderBy(s => s.CourseID).ToListAsync();
-            return student;
-        }*/
-
-        /*public IEnumerable<Student> GetByCourseId(int courseID)
-        {
-            var student = _dbcontext.Students.FirstOrDefault(s => s.Id == courseID);
-
-            if (student == null)
-                throw new Exception($"Data id {courseID} tidak ditemukan");
-            return student;
-        }*/
-
-
-
-
     }
 }

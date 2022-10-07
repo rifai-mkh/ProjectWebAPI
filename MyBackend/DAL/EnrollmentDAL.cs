@@ -15,10 +15,11 @@ namespace MyBackend.DAL
             _dbcontext = dbcontext;
         }
 
-        public void AddEnrollment(int StudentId, int CourseID)
+        public void AddEnrollment(int EnrollmentId, int StudentId, int CourseID)
         {
             try
             {
+                var enrollment = _dbcontext.Enrollments.FirstOrDefault(c => c.EnrollmentId == EnrollmentId);
                 var course = _dbcontext.Courses.FirstOrDefault(c => c.CourseID == CourseID);
                 var student = _dbcontext.Students.FirstOrDefault(s => s.Id == StudentId);
 
@@ -59,10 +60,7 @@ namespace MyBackend.DAL
             throw new NotImplementedException();
         }
 
-        void IEnrollment.Enrollment(int StudentId, int CourseID)
-        {
-            throw new NotImplementedException();
-        }
+        
 
         Task<IEnumerable<Enrollment>> ICrud<Enrollment>.GetAll()
         {

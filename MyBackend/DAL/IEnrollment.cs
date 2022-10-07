@@ -4,6 +4,6 @@ namespace MyBackend.DAL
 {
     public interface IEnrollment : ICrud<Enrollment>
     {
-        public void Enrollment(int StudentId, int CourseID);
+        public void AddEnrollment(int EnrollmentId, int StudentId, int CourseID);
     }
 }

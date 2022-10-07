@@ -1,4 +1,5 @@
 //using System.Data.Entity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MyBackend.DAL;
 
@@ -15,16 +16,25 @@ builder.Services.AddSwaggerGen();
 //menambahkan automapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-
-
 //untuk EF
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("StudentConnection")));
+
+//add Identity
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+{
+    options.Password.RequiredLength = 8;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequireDigit = true;
+}).AddDefaultTokenProviders().AddEntityFrameworkStores<AppDbContext>();
 
 //DI
 builder.Services.AddScoped<IStudent, StudentDAL>();
 builder.Services.AddScoped<ICourse, CourseDAL>();
 builder.Services.AddScoped<IEnrollment, EnrollmentDAL>();
+builder.Services.AddScoped<IUser, UserDAL>();
 
 var app = builder.Build();
 
@@ -37,6 +47,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

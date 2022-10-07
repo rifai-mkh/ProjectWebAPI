@@ -36,7 +36,7 @@ namespace MyBackend.Controllers
             }
         }*/
 
-        [HttpPost]
+        /*[HttpPost]
         public async Task<ActionResult> Post(EnrollmentAddDTO enrollmentAddDTO)
         {
             try
@@ -45,6 +45,20 @@ namespace MyBackend.Controllers
                 var result = await _enrollmentDAL.Insert(newenroll);
                 var courseDTO = _mapper.Map<EnrollmentAddDTO>(result);
                 return CreatedAtAction("Get", new { id = enrollmentAddDTO.EnrollmentId }, courseDTO);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }*/
+
+        [HttpPost("AddEnrollment")]
+        public IActionResult AddEnrollment(EnrollmentAddDTO enrollmentAddDTO)
+        {
+            try
+            {
+                _enrollment.AddEnrollment(enrollmentAddDTO.EnrollmentId, enrollmentAddDTO.StudentId, enrollmentAddDTO.CourseID);
+                return Ok($"Student Id {enrollmentAddDTO.StudentId} berhasil ditambahkan ke course {enrollmentAddDTO.CourseID}");
             }
             catch (Exception ex)
             {
