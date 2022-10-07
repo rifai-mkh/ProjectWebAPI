@@ -15,6 +15,7 @@ namespace MyBackend.Controllers
             _user = user;
         }
 
+        //register
         [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Registration(AddUserDTO userDto)
