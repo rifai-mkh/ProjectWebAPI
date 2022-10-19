@@ -14,38 +14,101 @@ namespace MyBackend.DAL
         {
             _dbcontext = dbcontext;
         }
-
-        public void AddEnrollment(int EnrollmentId, int StudentId, int CourseID)
+         public async Task Delete(int id)
         {
             try
             {
-                var enrollment = _dbcontext.Enrollments.FirstOrDefault(c => c.EnrollmentId == EnrollmentId);
-                var course = _dbcontext.Courses.FirstOrDefault(c => c.CourseID == CourseID);
-                var student = _dbcontext.Students.FirstOrDefault(s => s.Id == StudentId);
-
-                if (student != null && course != null)
-
-                    //course.students.Add(student);
-                    _dbcontext.SaveChanges();
-
+                var delete = await _dbcontext.Enrollments.FirstOrDefaultAsync(s => s.EnrollmentId == id);
+                if (delete == null)
+                    throw new Exception($"Data dengan id {id} tidak ditemukan");
+                _dbcontext.Enrollments.Remove(delete);
+                await _dbcontext.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new Exception($"{ex.Message}");
             }
         }
 
-        public Task<Enrollment> GetCourseWithStudent(int courseID)
+        public async Task<IEnumerable<Enrollment>> GetAll()
         {
-            throw new NotImplementedException();
+            var results = await _dbcontext.Enrollments.OrderBy(s => s.EnrollmentId).ToListAsync();
+            return results;
         }
+
+
+        public async Task<Enrollment> GetById(int id)
+        {
+            var result = await _dbcontext.Enrollments.Include(s => s.Course).Include(s => s.Student).FirstOrDefaultAsync(s => s.EnrollmentId == id);
+            if (result == null) throw new Exception($"Data dengan id {id} tidak ditemukan");
+            return result;
+        }
+
+        public async Task<IEnumerable<Enrollment>> GetEnrollmentStudentCourses()
+        {
+            var results = await _dbcontext.Enrollments.Include(s => s.Course).Include(s => s.Student).ToListAsync();
+            return results;
+        }
+
 
         public async Task<Enrollment> Insert(Enrollment obj)
         {
-
             try
             {
+                //obj.CourseID = obj.Course.CourseID;
+                //obj.StudentID = await _context.Students.Select(n => n.value = ID).ToListAsync();
                 _dbcontext.Enrollments.Add(obj);
+                //List<AppContext> students = _context.Students.Select(n =>
+                //new AppContext
+                //{
+                //    Value = n.ID,
+                //    Text = n.FirstMidName
+                //}).ToList();
+                
+                await _dbcontext.SaveChangesAsync();
+                return obj;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"{ex.Message}");
+            }
+
+        }
+
+        public async Task<Enrollment> InsertEnrollment(Enrollment obj, int studentId, int courseID)
+        {
+
+
+            obj.StudentId = studentId;
+            obj.CourseID = courseID;
+
+            _dbcontext.Enrollments.Add(obj);
+            await _dbcontext.SaveChangesAsync();
+            
+            return obj;
+
+
+        }
+
+        public async Task<IEnumerable<Enrollment>> Pagging(int skip, int take)
+        {
+            var results = await _dbcontext.Enrollments.Include(s => s.Course).Include(s => s.Student)
+               .Skip(skip).Take(take).ToArrayAsync();
+            return results;
+        }
+
+        public async Task<Enrollment> Update(Enrollment obj)
+        {
+            try
+            {
+                var update = await _dbcontext.Enrollments.FirstOrDefaultAsync(s => s.EnrollmentId == obj.EnrollmentId);
+                if (update == null)
+                    throw new Exception($"Data dengan id {obj.EnrollmentId} tidak ditemukan");
+
+                update.CourseID = obj.CourseID;
+                update.StudentId = obj.StudentId;
+                update.Grade = obj.Grade;
+               
                 await _dbcontext.SaveChangesAsync();
                 return obj;
             }
@@ -54,37 +117,6 @@ namespace MyBackend.DAL
                 throw new Exception($"{ex.Message}");
             }
         }
-
-        Task ICrud<Enrollment>.Delete(int id)
-        {
-            throw new NotImplementedException();
-        }
-
         
-
-        Task<IEnumerable<Enrollment>> ICrud<Enrollment>.GetAll()
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<Enrollment> ICrud<Enrollment>.GetBy(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<Enrollment> ICrud<Enrollment>.GetById(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        /*Task<Enrollment> ICrud<Enrollment>.Insert(Enrollment obj)
-        {
-            throw new NotImplementedException();
-        }*/
-
-        Task<Enrollment> ICrud<Enrollment>.Update(Enrollment obj)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

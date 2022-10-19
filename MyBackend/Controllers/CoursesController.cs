@@ -9,7 +9,7 @@ using MyBackend.Models;
 
 namespace MyBackend.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CoursesController : ControllerBase
@@ -51,17 +51,9 @@ namespace MyBackend.Controllers
             var results = _courseDAL.GetByTitle(title);
             var listCourseReadDto = _mapper.Map<IEnumerable<CourseReadDTO>>(results);
             return listCourseReadDto;
-        }
-            /*[HttpGet("{studentID}")]
-            public async Task<StudentWithCourseDTO> GetByStudentId(int id)
-            {
-                var result = await _courseDAL.GetByStudentId(id);
-                var courseReadDto = _mapper.Map<StudentWithCourseDTO>(result);
-                return courseReadDto;
-            }*/
+        }            
 
-
-            //Query untuk menampilkan Semua Student beserta dengan Semua Course yang diambil
+        //Query untuk menampilkan Semua Student beserta dengan Semua Course yang diambil
         [HttpGet("StudentsWithCourses")]
         public IEnumerable<StudentWithCourseDTO> GetCourseWithCourse()
         {
@@ -69,18 +61,6 @@ namespace MyBackend.Controllers
             var listStudentWithCourseDto = _mapper.Map<IEnumerable<StudentWithCourseDTO>>(results);
             return listStudentWithCourseDto;
         }
-
-
-
-        /*[HttpGet("Studentsbycourse")]
-        public IEnumerable<StudentWithCourseDTO> GetById(int id)
-        {
-            var results = _student.GetById(id);
-            var listStudentWithCourseDto = _mapper.Map<IEnumerable<StudentWithCourseDTO>>(results);
-            return listStudentWithCourseDto;
-        }*/
-
-
 
 
         [HttpPost]
@@ -113,7 +93,7 @@ namespace MyBackend.Controllers
             }
         }
 
-        [HttpPost("AddNewStudentToCourse")]
+        /*[HttpPost("AddNewStudentToCourse")]
         public IActionResult AddNewStudentToCourse(AddStudentToCourseDTO addStudentToCourseDTO)
         {
             try
@@ -125,7 +105,7 @@ namespace MyBackend.Controllers
             {
                 return BadRequest(ex.Message);
             }
-        }
+        }*/
 
         [HttpPost("RemoveCourseFromStudent")]
         public IActionResult RemoveCourseFromStudent(AddStudentToCourseDTO studentCourseDto)

@@ -8,11 +8,8 @@ namespace MyBackend.DAL
         public IEnumerable<Student> GetAllWithCourse();
         public Student GetStudentWithCourse(int studentId);
         public Course GetCourseWithStudent(int courseID);
-        //public IEnumerable<Student> GetByStudentId(int studentId);
 
         public Student GetById(int id);
-        /*public IEnumerable<Student> GetByLastName(string lastname);
-        public IEnumerable<Student> GetByFirstMidName(string firstmidname);*/
         public IEnumerable<Student> GetByLastName(string lastname);
         public IEnumerable<Student> GetByfirstMidName(string firstmidname);
         public Student Insert(Student student);

@@ -71,7 +71,6 @@ namespace MyBackend.DAL
         }
 
 
-
         public async Task<Course> Insert(Course obj)
         {
 
@@ -136,41 +135,13 @@ namespace MyBackend.DAL
             }
         }
 
-        public async Task<Course> GetBy(int id)
+        /*public async Task<Course> GetBy(int id)
         {
             var result = _dbcontext.Courses.FirstOrDefault(s => s.CourseID == id);
 
             if (result == null)
                 throw new Exception($"Data Course Id {id} tidak ditemukan");
             return result;
-        }
-
-        /*public void RemoveCourseFromStudent(int studentId, int courseID)
-        {
-            try
-            {
-                var battleWithSamurai = _dbcontext.Courses.Include(b => b.Students.Where(s => s.Id == studentId))
-                .FirstOrDefault(s => s.CourseID == courseID);
-                var student = battleWithSamurai.Students[0];
-                battleWithSamurai.Students.Remove(student);
-                _dbcontext.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }*/
-
-
-
-        /*public async Task<Course> GetCourseWithStudent(int courseID)
-        {
-            var result = _dbcontext.Courses.Include(s => s.Students)
-                .FirstOrDefault(s => s.CourseID == courseID);
-            if (result == null)
-                throw new Exception($"samurai id {courseID} tidak ditemukan");
-
-            return result;
-        }*/
+        } */       
     }
 }
