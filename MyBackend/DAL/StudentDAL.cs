@@ -164,5 +164,12 @@ namespace MyBackend.DAL
                 throw new Exception(ex.Message);
             }
         }
+
+        public async Task<IEnumerable<Student>> Pagging(int skip, int take)
+        {
+            var results = await _dbcontext.Students
+               .Skip(skip).Take(take).ToArrayAsync();
+            return results;
+        }
     }
 }

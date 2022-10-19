@@ -162,7 +162,17 @@ namespace MyBackend.Controllers
             {
                 return BadRequest(ex.Message);
             }
-        }        
+        }
+
+        [HttpGet("Pagging/{skip}/{take}")]
+        public async Task<IEnumerable<CourseDTO>> Pagging(int skip, int take)
+        {
+
+            var results = await _courseDAL.Pagging(skip, take);
+            var DTO = _mapper.Map<IEnumerable<CourseDTO>>(results);
+
+            return DTO;
+        }
 
     }
 }

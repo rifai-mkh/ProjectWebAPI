@@ -10,6 +10,7 @@ namespace MyBackend.DAL
         public void AddStudentToCourse(int studentId, int courseID);
         public void AddEnrollment(int enrollmentID, int studentId, int courseID, string grade);
         public IEnumerable<Course> GetByTitle(string title);
+        Task<IEnumerable<Course>> Pagging(int skip, int take);
 
     }
 }

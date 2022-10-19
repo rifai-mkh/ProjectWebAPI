@@ -135,13 +135,20 @@ namespace MyBackend.DAL
             }
         }
 
-        /*public async Task<Course> GetBy(int id)
+        public async Task<IEnumerable<Course>> Pagging(int skip, int take)
+        {
+            var results = await _dbcontext.Courses
+               .Skip(skip).Take(take).ToArrayAsync();
+            return results;
+        }
+
+        public async Task<Course> GetBy(int id)
         {
             var result = _dbcontext.Courses.FirstOrDefault(s => s.CourseID == id);
 
             if (result == null)
                 throw new Exception($"Data Course Id {id} tidak ditemukan");
             return result;
-        } */       
+        } 
     }
 }

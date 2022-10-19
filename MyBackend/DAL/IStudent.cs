@@ -16,5 +16,7 @@ namespace MyBackend.DAL
         public Student Update(Student student);        
         public void Delete(int id);
         void RemoveCourseFromStudent(int studentId, int courseID);
+
+        Task<IEnumerable<Student>> Pagging(int skip, int take);
     }
 }
