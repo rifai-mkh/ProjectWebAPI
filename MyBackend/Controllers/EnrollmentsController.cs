@@ -52,7 +52,7 @@ namespace MyBackend.Controllers
 
        
 
-        [HttpGet("Pagging/{skip}/{take}")]
+        [HttpGet("Pagging")]
         public async Task<IEnumerable<EnrollmentStudentCourseDTO>> Pagging(int skip, int take)
         {
 
@@ -63,7 +63,7 @@ namespace MyBackend.Controllers
         }
 
 
-        [HttpPost("InputEnrollment")]
+        [HttpPost("InsertEnrollment")]
 
         public async Task<ActionResult> Post(EnrollmentCreateDTO CreateDto, int studenID, int courseID)
         {
